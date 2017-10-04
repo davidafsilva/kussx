@@ -19,6 +19,6 @@ services:
   redis:
     image: redis
     volumes:
-      - kussx_redis_data:/data
+      - redis_data:/data
 
 
