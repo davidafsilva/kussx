@@ -53,6 +53,17 @@ ext.mainVerticle = 'pt.davidafsilva.kussx.RestVerticle'
 
 // distribution
 distZip.enabled = false
+distTar.archiveName = project.name + ".tar"
+
+// start scripts
+startScripts {
+    doLast {
+        unixScript.text = unixScript.text
+                .replace('APP_ARGS=$(save "$@")', 'APP_ARGS=\"run ' + mainVerticle + ' \"$(save "$@")')
+        windowsScript.text = windowsScript.text
+                .replace('set CMD_LINE_ARGS=', "set CMD_LINE_ARGS=run $mainVerticle ")
+    }
+}
 
 // Redeploy watcher.
 run {
