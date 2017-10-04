@@ -1,0 +1,16 @@
+<configuration scan="true" scanPeriod="10 seconds">
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d [%thread] %-5level %logger{36} - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <!-- Enable debug for the application -->
+    <logger name="pt.davidafsilva.kussx" level="debug"/>
+
+    <!-- By default, only log at level INFO and above -->
+    <root level="warn">
+        <appender-ref ref="console"/>
+    </root>
+
+</configuration>

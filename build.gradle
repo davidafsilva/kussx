@@ -1,5 +1,5 @@
 group 'pt.davidafsilva.kussx'
-version '1.0-SNAPSHOT'
+version '1.0.0'
 
 buildscript {
     ext {
@@ -18,15 +18,24 @@ buildscript {
 
 apply plugin: 'java'
 apply plugin: 'kotlin'
+apply plugin: 'idea'
+apply plugin: 'application'
 
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    mavenLocal()
 }
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
+    compile "io.vertx:vertx-core:$vertx_version"
+    compile "io.vertx:vertx-web:$vertx_version"
+    compile "io.vertx:vertx-rx-java:$vertx_version"
+    compile "io.vertx:vertx-redis-client:$vertx_version"
+    compile 'ch.qos.logback:logback-classic:1.2.3'
+    compile 'pt.davidafsilva.hashids:java-hashids:0.0.1'
 }
 
 compileKotlin {
@@ -34,4 +43,28 @@ compileKotlin {
 }
 compileTestKotlin {
     kotlinOptions.jvmTarget = "1.8"
+}
+
+applicationDefaultJvmArgs = [
+        '-Dvertx.logger-delegate-factory-class-name=io.vertx.core.logging.SLF4JLogDelegateFactory'
+]
+mainClassName = 'io.vertx.core.Launcher'
+ext.mainVerticle = 'pt.davidafsilva.kussx.RestVerticle'
+
+// distribution
+distZip.enabled = false
+
+// Redeploy watcher.
+run {
+    args = [
+            'run',
+            mainVerticle,
+            "--launcher-class=$mainClassName",
+            "--redeploy=src/**/*.*",
+            "--on-redeploy=./gradlew classes"
+    ]
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.2'
 }
