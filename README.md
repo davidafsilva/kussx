@@ -10,12 +10,7 @@ This project has the following technological stack:
 * Deployment: [Docker & Docker-Compose](https://docker.com)
 
 
-## Try it out
-
-Simply run `docker-compose up` and the Rest API shall be available at port 80.
-
-
-### Rest API
+## Rest API
 ##### `POST /shorten`
 Accepts an `application/json` payload in the body that shall contain a field named `url` 
 with the value containing the url that shall be shortened.
@@ -31,3 +26,30 @@ with the actual url in the `Location` header.
 ##### `DELETE /:key`
 Deletes the entry associated with the given key.
 Replies with a `200 OK` if everything goes smoothly, otherwise a `500 Internal Server Error` is returned.
+
+## Try it out
+Simply run `docker-compose up` and the Rest API shall be available at port 80.
+
+## Examples
+Examples rely on the awesome [httpie](https://httpie.org/) HTTP client.
+
+```shell
+ $ http http://localhost/test
+HTTP/1.1 404 Not Found
+Content-Length: 9
+Not Found
+
+ $ http post http://localhost/shorten url=https://youtube.com
+HTTP/1.1 200 OK
+Content-Length: 12
+{"key":"Dl"}
+
+ $ http http://localhost/Dl
+HTTP/1.1 307 Temporary Redirect
+Content-Length: 0
+Location: https://youtube.com
+
+ $ http delete http://localhost/Dl
+HTTP/1.1 200 OK
+Content-Length: 0
+```
