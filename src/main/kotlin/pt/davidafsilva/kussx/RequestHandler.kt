@@ -22,7 +22,7 @@ import java.util.concurrent.Executors
  *
  * @author david
  */
-class RequestHandler(vertx: Vertx) {
+class RequestHandler(vertx: Vertx, private val config: Configuration) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
     private val incrExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4)
@@ -31,21 +31,20 @@ class RequestHandler(vertx: Vertx) {
     private var redisClient: RedisClient? = null
 
     init {
-        val config = vertx.orCreateContext.config()
         // hashids
-        val salt = config.map.computeIfAbsent("KUSSX_SALT", {
+        val salt = config.getStr("KUSSX_SALT", {
             val b = ByteArray(16)
             SecureRandom().nextBytes(b)
             logger.debug("used {} as salt", b)
             b.toString()
-        }) as String
+        })
         hashids = Hashids.newInstance(salt)
 
         // redis client
         redisClient = RedisClient.create(vertx, RedisOptions().apply {
-            this.auth = config.getString("KUSSX_REDIS_AUTH_PASSWORD")
-            this.host = config.getString("KUSSX_REDIS_HOST", "localhost")
-            this.port = config.getInteger("KUSSX_REDIS_PORT", 6379)
+            this.auth = config.getStr("KUSSX_REDIS_AUTH_PASSWORD")
+            this.host = config.getStr("KUSSX_REDIS_HOST", "localhost")
+            this.port = config.getInt("KUSSX_REDIS_PORT", 6379)
         })
     }
 

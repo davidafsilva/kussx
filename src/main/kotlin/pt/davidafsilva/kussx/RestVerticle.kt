@@ -18,13 +18,15 @@ class RestVerticle : AbstractVerticle() {
     private var requestHandler: RequestHandler? = null
 
     override fun start(startFuture: Future<Void>?) {
+        val configuration = Configuration(config())
+
         // request handler
-        requestHandler = RequestHandler(vertx)
+        requestHandler = RequestHandler(vertx, configuration)
 
         // options
         val options = HttpServerOptions().apply {
-            port = config().getInteger("KUSSX_API_PORT", 8080)
-            host = config().getString("KUSSX_API_HOST", "0.0.0.0")
+            port = configuration.getInt("KUSSX_API_PORT", 8080)
+            host = configuration.getStr("KUSSX_API_HOST", "0.0.0.0")
         }
         // routing
         val router = Router.router(vertx).also {
