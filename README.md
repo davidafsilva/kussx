@@ -3,7 +3,7 @@ A URL Shortener Service project for recreation/demo purposes.
 
 This project has the following technological stack:
 * Programming language: [Kotlin](https://kotlinlang.org)
-* Server Framework(s): 
+* Server Framework(s) / Application(s): 
   * [Vert.x](http://vertx.io): reactive toolkit for the JVM 
   * [RxJava](https://github.com/ReactiveX/RxJava): asynchronous behavior composition library for the JVM 
   * [Redis](https://redis.io): key-value store
