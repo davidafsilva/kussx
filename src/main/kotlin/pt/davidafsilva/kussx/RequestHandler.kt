@@ -49,6 +49,22 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         })
     }
 
+    fun keyInformation(context: RoutingContext) {
+        val key = context.pathParam("key")
+        redisClient?.run {
+            rxGet(key)
+                    .flatMap {
+                        if (it == null) Single.error(RuntimeException("no such key"))
+                        else Single.just(JsonObject(it))
+                    }
+                    .doOnSuccess {
+                        context.response().end(it.encode())
+                    }
+                    .doOnError { context.fail(NOT_FOUND.code()) }
+                    .subscribe()
+        }
+    }
+
     fun redirectWithKey(context: RoutingContext) {
         val key = context.pathParam("key")
         redisClient?.run {

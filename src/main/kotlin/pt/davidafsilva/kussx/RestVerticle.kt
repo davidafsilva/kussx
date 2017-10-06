@@ -30,6 +30,7 @@ class RestVerticle : AbstractVerticle() {
         }
         // routing
         val router = Router.router(vertx).also {
+            it.get("/:key/info").handler(requestHandler!!::keyInformation)
             it.get("/:key").handler(requestHandler!!::redirectWithKey)
             it.post("/shorten").handler(BodyHandler.create())
             it.post("/shorten")
