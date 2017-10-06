@@ -30,14 +30,14 @@ class RestVerticle : AbstractVerticle() {
         }
         // routing
         val router = Router.router(vertx).also {
-            it.get("/:key").handler(requestHandler!!::handleIdDecodeRequest)
+            it.get("/:key").handler(requestHandler!!::redirectWithKey)
             it.post("/shorten").handler(BodyHandler.create())
             it.post("/shorten")
                     .consumes("application/json")
                     .produces("application/json")
-                    .handler(requestHandler!!::handleIdCreationRequest)
+                    .handler(requestHandler!!::createKey)
             it.delete("/:key")
-                    .handler(requestHandler!!::handleIdDeletionRequest)
+                    .handler(requestHandler!!::deleteKey)
         }
         // create http server
         vertx.createHttpServer(options)

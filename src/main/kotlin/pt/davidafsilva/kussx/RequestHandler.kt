@@ -49,7 +49,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         })
     }
 
-    fun handleIdDecodeRequest(context: RoutingContext) {
+    fun redirectWithKey(context: RoutingContext) {
         val key = context.pathParam("key")
         redisClient?.run {
             rxGet(key)
@@ -75,7 +75,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         }
     }
 
-    fun handleIdCreationRequest(context: RoutingContext) {
+    fun createKey(context: RoutingContext) {
         val url: String? = context.bodyAsJson.getString("url", "")
         when {
             url.isNullOrEmpty() -> context.fail(BAD_REQUEST.code())
@@ -105,7 +105,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         }
     }
 
-    fun handleIdDeletionRequest(context: RoutingContext) {
+    fun deleteKey(context: RoutingContext) {
         val key = context.pathParam("key")
         redisClient?.run {
             rxDel(key)
