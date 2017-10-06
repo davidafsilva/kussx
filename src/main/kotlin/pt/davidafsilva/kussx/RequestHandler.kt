@@ -53,7 +53,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         redisClient?.run {
             rxGet(key)
                     .flatMap {
-                        if (it == null) Single.error(RuntimeException("no suck mapping"))
+                        if (it == null) Single.error(RuntimeException("no such key"))
                         else Single.just(it)
                     }
                     .map { JsonObject(it) }
@@ -64,7 +64,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
                                 .putHeader(HttpHeaders.LOCATION.toString(), it.getString("url", ""))
                                 .end()
 
-                        // increment the access counter in the backgroun
+                        // increment the access counter in the background
                         rxSet(key, it.put("access", it.getLong("access", 0L) + 1).encode())
                                 .subscribeOn(Schedulers.from(incrExecutor))
                                 .subscribe()
