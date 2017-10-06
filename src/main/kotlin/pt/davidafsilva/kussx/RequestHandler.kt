@@ -1,21 +1,22 @@
 package pt.davidafsilva.kussx
 
-import io.netty.handler.codec.http.HttpResponseStatus
+import io.netty.handler.codec.http.HttpResponseStatus.*
 import io.vertx.core.AsyncResult
 import io.vertx.core.Handler
-import io.vertx.core.http.HttpHeaders
+import io.vertx.core.http.HttpHeaders.LOCATION
 import io.vertx.core.json.JsonObject
 import io.vertx.redis.RedisOptions
 import io.vertx.rxjava.core.Vertx
 import io.vertx.rxjava.ext.web.RoutingContext
 import io.vertx.rxjava.redis.RedisClient
-import org.slf4j.LoggerFactory
+import org.slf4j.LoggerFactory.getLogger
 import pt.davidafsilva.hashids.Hashids
 import rx.Single
 import rx.schedulers.Schedulers
+import java.lang.Runtime.getRuntime
 import java.security.SecureRandom
 import java.time.Instant
-import java.util.concurrent.Executors
+import java.util.concurrent.Executors.newFixedThreadPool
 
 /**
  * The API request handler
@@ -24,8 +25,8 @@ import java.util.concurrent.Executors
  */
 class RequestHandler(vertx: Vertx, private val config: Configuration) {
 
-    private val logger = LoggerFactory.getLogger(javaClass)
-    private val incrExecutor = Executors.newFixedThreadPool(Runtime.getRuntime().availableProcessors() * 4)
+    private val logger = getLogger(javaClass)
+    private val incrExecutor = newFixedThreadPool(getRuntime().availableProcessors() * 4)
 
     private var hashids: Hashids? = null
     private var redisClient: RedisClient? = null
@@ -60,8 +61,8 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
                     .doOnSuccess {
                         // redirect the request
                         context.response()
-                                .setStatusCode(HttpResponseStatus.TEMPORARY_REDIRECT.code())
-                                .putHeader(HttpHeaders.LOCATION.toString(), it.getString("url", ""))
+                                .setStatusCode(TEMPORARY_REDIRECT.code())
+                                .putHeader(LOCATION.toString(), it.getString("url", ""))
                                 .end()
 
                         // increment the access counter in the background
@@ -69,7 +70,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
                                 .subscribeOn(Schedulers.from(incrExecutor))
                                 .subscribe()
                     }
-                    .doOnError { context.fail(HttpResponseStatus.NOT_FOUND.code()) }
+                    .doOnError { context.fail(NOT_FOUND.code()) }
                     .subscribe()
         }
     }
@@ -77,7 +78,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
     fun handleIdCreationRequest(context: RoutingContext) {
         val url: String? = context.bodyAsJson.getString("url", "")
         when {
-            url.isNullOrEmpty() -> context.fail(HttpResponseStatus.BAD_REQUEST.code())
+            url.isNullOrEmpty() -> context.fail(BAD_REQUEST.code())
             else -> {
                 redisClient?.apply {
                     rxIncr("shorten-counter")
@@ -97,7 +98,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
                                 rxSet(k, json).map { JsonObject().put("key", k) }
                             }
                             .doOnSuccess { context.response().end(it.encode()) }
-                            .doOnError { context.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()) }
+                            .doOnError { context.fail(INTERNAL_SERVER_ERROR.code()) }
                             .subscribe()
                 }
             }
@@ -109,7 +110,7 @@ class RequestHandler(vertx: Vertx, private val config: Configuration) {
         redisClient?.run {
             rxDel(key)
                     .doOnSuccess { context.response().end() }
-                    .doOnError { context.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code()) }
+                    .doOnError { context.fail(INTERNAL_SERVER_ERROR.code()) }
                     .subscribe()
         }
     }
