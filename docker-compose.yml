@@ -9,7 +9,7 @@ networks:
 
 services:
   rest:
-    build: .
+    image: davidafsilva/kussx
     ports:
       - 80:8080
     environment:

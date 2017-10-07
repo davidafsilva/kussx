@@ -28,7 +28,9 @@ Deletes the entry associated with the given key.
 Replies with a `200 OK` if everything goes smoothly, otherwise a `500 Internal Server Error` is returned.
 
 ## Try it out
-Simply run `docker-compose up` and the Rest API shall be available at port 80.
+Either clone the repository or simply copy the [docker-compose.yml](https://github.com/davidafsilva/kussx/blob/master/docker-compose.yml) file 
+(the image will be pulled from [DockerHub](https://hub.docker.com/r/davidafsilva/kussx/)) and run `docker-compose up`.
+The Rest API shall be available at port 80.
 
 ## Examples
 Examples rely on the awesome [httpie](https://httpie.org/) HTTP client.
