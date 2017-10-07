@@ -28,9 +28,12 @@ Deletes the entry associated with the given key.
 Replies with a `200 OK` if everything goes smoothly, otherwise a `500 Internal Server Error` is returned.
 
 ## Try it out
-Either clone the repository or simply copy the [docker-compose.yml](https://github.com/davidafsilva/kussx/blob/master/docker-compose.yml) file 
+Simply copy the [docker-compose.yml](https://github.com/davidafsilva/kussx/blob/master/docker-compose.yml) file 
 (the image will be pulled from [DockerHub](https://hub.docker.com/r/davidafsilva/kussx/)) and run `docker-compose up`.
 The Rest API shall be available at port 80.
+
+You can also clone the repository, `./gradlew build` and use the `docker-compose.yml` file to target the
+local `Dockerfile` instead of the (remote) image.
 
 ## Examples
 Examples rely on the awesome [httpie](https://httpie.org/) HTTP client.
